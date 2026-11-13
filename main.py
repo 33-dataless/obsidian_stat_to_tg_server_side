@@ -1,20 +1,24 @@
-import uvicorn
 import asyncio
+import logging
+
+from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from bot.bot import bot, dp, start_bot, stop_bot
-
+from bot.bot import bot, dp
 from api.server import Server
+from planner.planner import Planner
+
 from logger import configure_logger
 
 configure_logger()
 log = logging.getLogger(__name__)
-log.debug("application started")
+planner = Planner()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    log.info("APPLICATION STARTING")
+    planner.start()
 
-    # Запускаем Telegram-бота в фоне
     bot_task = asyncio.create_task(
         dp.start_polling(
             bot,
@@ -24,14 +28,18 @@ async def lifespan(app: FastAPI):
         )
     )
 
-    yield
+    try:
+        yield
 
-    # Корректно останавливаем бота
-    await dp.stop_polling()
+    finally:
+        log.info("APPLICATION STOPPING")
+        planner.stop()
+        if not bot_task.done():
+            await dp.stop_polling()
+        try:
+            await bot_task
+        finally:
+            await bot.session.close()
+        log.info("APPLICATION STOPPED")
 
-    await bot_task
-
-    await bot.session.close()
-
-
-server = Server(lifespan=lifespan) 
+server = Server(lifespan=lifespan)

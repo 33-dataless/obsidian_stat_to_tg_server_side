@@ -15,6 +15,7 @@ class Config(BaseSettings):
     BASE64_KEY: SecretStr = Field(validation_alias="BASE64_KEY")
     TELEGRAM_BOT_TOKEN: SecretStr = Field(validation_alias="TELEGRAM_BOT_TOKEN")
     TELEGRAM_ADMIN_ID: SecretStr = Field(validation_alias="TELEGRAM_ADMIN_ID")
+    TIME_ZONE: SecretStr = Field(validation_alias="TIME_ZONE")
 
     @field_validator("BASE64_KEY")
     @classmethod

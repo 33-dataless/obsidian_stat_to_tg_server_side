@@ -6,12 +6,13 @@ from services.receiver import Receiver
 from data.models import Payload
 
 from logging import getLogger
+
 log = getLogger(__name__)
 
 class Server:
     def __init__(self, lifespan):
         self.lifespan = lifespan
-        self.app = FastAPI(self.lifespan)
+        self.app = FastAPI(lifespan=self.lifespan)
 
         self.crypto = Crypto()
         self.receiver = Receiver()
@@ -23,26 +24,32 @@ class Server:
         async def receive_data(request: Request):
             log.debug("SERVER ACCEPT REQUEST")
             encrypted = await request.body()
-
             try:
                 raw_data = self.crypto.decrypt(encrypted)
-                log.debug("DECTYPTION: OK")
+                log.debug("DECRYPTION: OK")
+
                 payload = Payload.model_validate(raw_data)
                 log.debug("VALIDATION: OK")
+
                 self.receiver.process(payload)
                 log.debug("GET DATA SUCCESS")
 
                 return {"status": "success"}
 
-            except ValueError as e:
-                print("[ERROR] Decryption/JSON:", repr(e))
-                raise HTTPException(status_code=400, detail="Invalid payload")
-
             except ValidationError as e:
-                print("[ERROR] Validation:", e.errors())
-                raise HTTPException(status_code=422, detail="Validation failed")
+                log.exception("Validation error")
+                raise HTTPException(
+                    status_code=422,
+                    detail="Validation failed"
+                )
+
+            except ValueError as e:
+                log.exception("Decryption/JSON error")
+                raise HTTPException(
+                    status_code=400,
+                    detail="Invalid payload"
+                )
 
         @self.app.get("/health")
         async def health():
-            log.debug("HEALTH: OK")
             return {"status": "ok"}

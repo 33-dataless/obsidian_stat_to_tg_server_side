@@ -1,5 +1,8 @@
 from data.models import Payload
 from data.event import Event
+import logging
+
+log = logging.getLogger(__name__)
 
 class Receiver:
     def __init__(self):
@@ -18,8 +21,8 @@ class Receiver:
         
         
     def _handle_obsidian(self, snapshot: dict):
-        print("obsidian")
-        print(snapshot)
+        log.info("OBSIDIAN HANDLED")
+        
 
     def _handle_chess(self):
         pass
