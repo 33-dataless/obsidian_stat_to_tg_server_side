@@ -10,5 +10,4 @@ admin_id = int(config.TELEGRAM_ADMIN_ID.get_secret_value())
 
 @router.message(CommandStart(), AdminFilter(admin_id))
 async def start(message: Message):
-    await message.answer("bot 200")
-
+    await message.answer(text="ФЕРНАНДО АГЕНТ ЧЕ СКАЗАЛ")

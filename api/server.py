@@ -31,7 +31,7 @@ class Server:
                 payload = Payload.model_validate(raw_data)
                 log.debug("VALIDATION: OK")
 
-                self.receiver.process(payload)
+                await self.receiver.process(payload)
                 log.debug("GET DATA SUCCESS")
 
                 return {"status": "success"}

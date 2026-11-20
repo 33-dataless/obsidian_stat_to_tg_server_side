@@ -11,6 +11,7 @@ class Config(BaseSettings):
         env_file_encoding="utf-8",
         extra="ignore"
     )
+    CHANNEL_ID: SecretStr = Field(validation_alias="CHANNEL_ID")
 
     BASE64_KEY: SecretStr = Field(validation_alias="BASE64_KEY")
     TELEGRAM_BOT_TOKEN: SecretStr = Field(validation_alias="TELEGRAM_BOT_TOKEN")

@@ -12,10 +12,10 @@ class Base(DeclarativeBase):
 
 class Database:
     def __init__(self):
-        log.ingo("DATABASE INITIATED")
+        log.info("DATABASE INITIATED")
         self.engine: AsyncEngine = create_async_engine(
             url = config.DATABASE_URL.get_secret_value(),
-            echo=True
+            # echo=True,
             pool_size=10,
             max_overflow=20
         )
