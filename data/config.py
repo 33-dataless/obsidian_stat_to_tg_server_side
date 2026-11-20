@@ -17,6 +17,14 @@ class Config(BaseSettings):
     TELEGRAM_ADMIN_ID: SecretStr = Field(validation_alias="TELEGRAM_ADMIN_ID")
     TIME_ZONE: SecretStr = Field(validation_alias="TIME_ZONE")
 
+    POSTGRES_USER: SecretStr = Field(validation_alias="POSTGRES_USER")    
+    POSTGRES_PSWD: SecretStr = Field(validation_alias="POSTGRES_PASSWORD")
+    POSTGRES_HOST: SecretStr = Field(validation_alias="POSTGRES_HOST")
+    POSTGRES_PORT: SecretStr = Field(validation_alias="POSTGRES_PORT")
+    POSTGRES_NAME: SecretStr = Field(validation_alias="POSTGRES_NAME")
+
+    DATABASE_URL: SecretStr = Field(validation_alies="DATABASE_URL")
+
     @field_validator("BASE64_KEY")
     @classmethod
     def validate_key(cls, value: SecretStr) -> SecretStr:
